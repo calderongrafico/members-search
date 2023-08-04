@@ -1,49 +1,34 @@
-import React, { Component } from 'react';
+import CardList from "./components/card-list/card-list";
+import SearchBox from "./components/search-box/search-box";
 
-import CardList from './components/card-list/card-list'
-import SearchBox from './components/search-box/search-box'
+import "./App.scss";
+import { useEffect, useState } from "react";
 
-import './App.scss';
-
-class App extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      members: [],
-      searchField: ''
-    }
-  }
-
-  componentDidMount() {
-    fetch('https://jsonplaceholder.typicode.com/users')
+function App() {
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
       .then((res) => res.json())
-      .then((dataMembers) => this.setState( { members: dataMembers } ));
-  }
+      .then((dataMembers) => setMembers(dataMembers));
+  });
 
-  // 'this.' funciona correctamente sin necesidad de bindear 
-  // porque estamos usando una arrow function, 
-  // que setea automáticamente el contexto de la función
-  handleSearch = (e) => {
-    this.setState({searchField: e.target.value})
-  }
+  const [members, setMembers] = useState([]);
+  const [searchField, setSearchField] = useState("");
 
-  render() {
-    // es lo mismo que:
-    // const members = this.state.members
-    // const searchFiel = this.state.searchField
-    const { members, searchField } = this.state;
-    const filteredMembers = members.filter((member) => {
-      return member.name.toLowerCase().includes(searchField.toLowerCase());
-    });
-    return (
-      <div className="App">
-        <h1>Members search app</h1>
-        <SearchBox placeholder="Search a member" handleSearch={this.handleSearch}/>
-        <CardList members={filteredMembers} />
-      </div>
-    )
-  }
+  const filteredMembers = members.filter((member) => {
+    return member.name.toLowerCase().includes(searchField.toLowerCase());
+  });
+
+  const handleSearch = (e) => {
+    setSearchField(e.target.value);
+  };
+
+  return (
+    <div className="App">
+      <h1 className="App-link">Members search app</h1>
+      <SearchBox placeholder="Search a member" handleSearch={handleSearch} />
+      <CardList members={filteredMembers} />
+    </div>
+  );
 }
 
 export default App;
